@@ -196,6 +196,7 @@ class EmailService {
         $name = $formData['name'];
         $email = $formData['email'];
         $phone = $formData['phone'] ?? '';
+        $service = $formData['service'] ?? '';
         $message = $formData['message'];
 
         // Get email settings from environment
@@ -203,12 +204,15 @@ class EmailService {
         $bcc = EnvLoader::get('CONTACT_BCC_EMAIL');
 
         // Build email subject and body
-        $subject = 'New Contact Form Submission - ' . EnvLoader::get('SITE_NAME', 'Website');
+        $subject = 'New Contact Form Submission - ' . EnvLoader::get('SITE_NAME', 'Nu:You Health');
 
         $body = "New contact form submission:\n\n";
         $body .= "Name: " . $name . "\n";
         $body .= "Email: " . $email . "\n";
         $body .= "Phone: " . ($phone ?: 'Not provided') . "\n";
+        if ($service) {
+            $body .= "Service: " . $service . "\n";
+        }
         $body .= "Message:\n" . $message . "\n";
         $body .= "\n---\n";
         $body .= "Submitted on: " . date('Y-m-d H:i:s') . "\n";
