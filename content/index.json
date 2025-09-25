@@ -6,14 +6,14 @@
     },
     "hero": {
         "title": "NU: YOU HEALTH",
-        "subtitle": "Your personalized approach to wellness",
-        "image": "assets\/images\/hero-background.jpg"
+        "subtitle": "Hale",
+        "image": "assets/images/hero-background.jpg"
     },
     "coming_soon": {
         "text": "Coming Soon"
     },
     "description": {
-        "text": "Your personalized approach to wellness is on its way. We're crafting a comprehensive health experience that puts you at the center of your care journey"
+        "text": "Your personalized approach to wellness is on its way. We're crafting a comprehensive health experience that puts you at the center of your care journey."
     },
     "buttons": {
         "primary": {
@@ -22,7 +22,7 @@
         },
         "secondary": {
             "text": "Practitioner Portal",
-            "link": "https:\/\/practitioner.nuyouuk.com"
+            "link": "https://practitioner.nuyouuk.com"
         }
     },
     "contact_form": {

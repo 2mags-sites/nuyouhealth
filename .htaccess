@@ -39,12 +39,10 @@ RewriteRule ^(includes|content|cache)/ - [F,L]
 # Admin files still protected by admin key parameter
 
 # Allow CSS and JS files in assets directory
-<Directory "assets">
-    <FilesMatch "\.(css|js|gif|jpe?g|png|webp|svg|woff|woff2|ttf|eot)$">
-        Order Allow,Deny
-        Allow from all
-    </FilesMatch>
-</Directory>
+<Files ~ "\.(css|js)$">
+    Order Allow,Deny
+    Allow from all
+</Files>
 
 # Protect uploads directory (allow images only, disable PHP execution)
 <Directory "assets/images/uploads">

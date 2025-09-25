@@ -1,5 +1,4 @@
 <?php
-// Include admin configuration
 require_once 'includes/admin-config.php';
 
 // Load content from JSON
@@ -9,100 +8,34 @@ $content = loadContent('index');
 $page_title = $content['meta']['title'] ?? 'NU: YOU HEALTH - Coming Soon';
 $page_description = $content['meta']['description'] ?? 'Your personalized approach to wellness is coming soon.';
 $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness, nu you health';
+
+require_once 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <meta name="description" content="<?php echo htmlspecialchars($page_description); ?>">
-    <meta name="keywords" content="<?php echo htmlspecialchars($page_keywords); ?>">
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($page_description); ?>">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']); ?>">
-
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
-    <meta name="twitter:description" content="<?php echo htmlspecialchars($page_description); ?>">
-
-    <!-- CSRF Token for admin mode -->
-    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="assets/css/styles.css">
-
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Nu:You Health",
-        "description": "<?php echo htmlspecialchars($page_description); ?>",
-        "url": "<?php echo htmlspecialchars($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']); ?>"
-    }
-    </script>
-</head>
-<body>
-    <?php if (IS_ADMIN()): ?>
-    <!-- Admin Bar -->
-    <div id="admin-bar" style="position: fixed; top: 0; left: 0; right: 0; background: #2563eb; color: white; padding: 10px 20px; z-index: 9999; font-family: Arial, sans-serif; font-size: 14px;">
-        <span>✏️ Admin Mode Active</span>
-        <button onclick="saveAllChanges()" style="background: #10b981; color: white; border: none; padding: 5px 15px; margin-left: 15px; border-radius: 3px; cursor: pointer;">Save Changes</button>
-        <a href="?logout=true" style="color: #fca5a5; text-decoration: none; margin-left: 15px;">Logout</a>
-    </div>
-    <div style="height: 50px;"></div> <!-- Admin bar spacer -->
-
-    <!-- Admin Mode Styles -->
-    <style>
-        .editable-content {
-            outline: 1px dashed #2563eb !important;
-            outline-offset: 2px !important;
-            min-height: 20px !important;
-            display: inline-block !important;
-            min-width: 50px !important;
-            cursor: pointer !important;
-        }
-        .editable-content:hover {
-            outline: 2px solid #2563eb !important;
-            background: rgba(37, 99, 235, 0.05) !important;
-        }
-        .editable-content:focus {
-            outline: 2px solid #2563eb !important;
-            background: rgba(37, 99, 235, 0.1) !important;
-        }
-    </style>
-    <?php endif; ?>
+<?php echo renderAdminBar(); ?>
 
     <div class="background-decoration"></div>
 
     <div class="container">
         <div class="logo-section">
-            <h1 class="logo-title"><?php echo editable($content['hero']['title'] ?? 'NU: YOU HEALTH', 'hero.title', 'span'); ?></h1>
-            <h2 class="logo-subtitle"><?php echo editable($content['hero']['subtitle'] ?? 'HALE', 'hero.subtitle', 'span'); ?></h2>
+            <h1 class="logo-title"><?php echo editable($content['hero']['title'] ?? 'NU: YOU HEALTH', 'hero.title'); ?></h1>
+            <h2 class="logo-subtitle"><?php echo editable($content['hero']['subtitle'] ?? 'Your personalized approach to wellness', 'hero.subtitle'); ?></h2>
         </div>
 
         <div class="decorative-line"></div>
 
-        <p class="coming-soon"><?php echo editable($content['coming_soon']['text'] ?? 'Coming Soon', 'coming_soon.text', 'span'); ?></p>
+        <p class="coming-soon"><?php echo editable($content['coming_soon']['text'] ?? 'Coming Soon', 'coming_soon.text'); ?></p>
 
         <p class="description">
-            <?php echo editable($content['description']['text'] ?? 'Your personalized approach to wellness is on its way. We\'re crafting a comprehensive health experience that puts you at the center of your care journey.', 'description.text', 'span'); ?>
+            <?php echo editable($content['description']['text'] ?? 'Your personalized approach to wellness is on its way. We\'re crafting a comprehensive health experience that puts you at the center of your care journey.', 'description.text'); ?>
         </p>
 
         <div class="button-container">
             <button class="btn btn-primary" onclick="showContactForm()">
-                <?php echo editable($content['buttons']['primary']['text'] ?? 'Get In Touch', 'buttons.primary.text', 'span'); ?>
+                <?php echo editable($content['buttons']['primary']['text'] ?? 'Get In Touch', 'buttons.primary.text'); ?>
             </button>
             <a href="<?php echo htmlspecialchars($content['buttons']['secondary']['link'] ?? 'https://practitioner.nuyouuk.com'); ?>" class="btn btn-secondary" target="_blank">
-                <?php echo editable($content['buttons']['secondary']['text'] ?? 'Practitioner Portal', 'buttons.secondary.text', 'span'); ?>
+                <?php echo editable($content['buttons']['secondary']['text'] ?? 'Practitioner Portal', 'buttons.secondary.text'); ?>
             </a>
         </div>
     </div>
@@ -115,8 +48,8 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
             <!-- Contact Form Content -->
             <div class="contact-form-content" id="contactFormContent">
                 <div class="form-header">
-                    <h3 class="form-title"><?php echo editable($content['contact_form']['title'] ?? 'Get In Touch', 'contact_form.title', 'span'); ?></h3>
-                    <p class="form-subtitle"><?php echo editable($content['contact_form']['subtitle'] ?? 'We\'d love to hear from you', 'contact_form.subtitle', 'span'); ?></p>
+                    <h3 class="form-title"><?php echo editable($content['contact_form']['title'] ?? 'Get In Touch', 'contact_form.title'); ?></h3>
+                    <p class="form-subtitle"><?php echo editable($content['contact_form']['subtitle'] ?? 'We\'d love to hear from you', 'contact_form.subtitle'); ?></p>
                 </div>
 
                 <div id="status-message" class="status-message" style="display: none;"></div>
@@ -221,125 +154,4 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Contact Form Functions
-        function showContactForm() {
-            document.getElementById('contactOverlay').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideContactForm() {
-            document.getElementById('contactOverlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
-            document.getElementById('contactForm').reset();
-            hideStatusMessage();
-        }
-
-        function showStatusMessage(message, type) {
-            const statusDiv = document.getElementById('status-message');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${type}`;
-            statusDiv.style.display = 'block';
-        }
-
-        function hideStatusMessage() {
-            const statusDiv = document.getElementById('status-message');
-            statusDiv.style.display = 'none';
-        }
-
-        // Privacy Policy Functions
-        function showPrivacyPolicy() {
-            document.getElementById('contactFormContent').style.display = 'none';
-            document.getElementById('privacyPolicyContent').style.display = 'block';
-        }
-
-        function hidePrivacyPolicy() {
-            document.getElementById('privacyPolicyContent').style.display = 'none';
-            document.getElementById('contactFormContent').style.display = 'block';
-        }
-
-        // Contact form submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const submitBtn = document.getElementById('submitBtn');
-                    const originalText = submitBtn.textContent;
-
-                    // Disable submit button
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
-                    hideStatusMessage();
-
-                    // Prepare form data
-                    const formData = new FormData(this);
-
-                    // Submit form
-                    fetch('contact-handler.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showStatusMessage('Thank you for your message! We\'ll be in touch soon.', 'success');
-                            setTimeout(() => {
-                                hideContactForm();
-                            }, 2000);
-                        } else {
-                            showStatusMessage(data.message || 'There was an error sending your message. Please try again.', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showStatusMessage('There was an error sending your message. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                    });
-                });
-            }
-
-            // Close overlay when clicking outside the form
-            const overlay = document.getElementById('contactOverlay');
-            if (overlay) {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideContactForm();
-                    }
-                });
-            }
-
-            // Close overlay with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    hideContactForm();
-                }
-            });
-
-            // Add smooth hover effects
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('mouseenter', function() {
-                    if (!this.disabled) {
-                        this.style.transform = 'translateY(-2px)';
-                    }
-                });
-
-                btn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-        });
-
-    </script>
-
-    <?php if (IS_ADMIN()): ?>
-    <!-- Admin Mode Scripts -->
-    <script src="assets/js/admin-functions.js" defer></script>
-    <?php endif; ?>
-</body>
-</html>
+<?php require_once 'includes/footer.php'; ?>

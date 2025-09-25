@@ -28,7 +28,7 @@ if (!file_exists('includes/admin-config.php')) {
 require_once 'includes/admin-config.php';
 
 // Check if admin mode is active
-if (!isAdminMode()) {
+if (!IS_ADMIN) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
@@ -77,7 +77,7 @@ if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
         'success' => true,
         'message' => 'Image uploaded successfully',
         'file' => [
-            'url' => '/assets/images/uploads/' . $new_filename,
+            'url' => 'assets/images/uploads/' . $new_filename,
             'name' => $new_filename,
             'size' => $_FILES['image']['size'],
             'width' => $width,
