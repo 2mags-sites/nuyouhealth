@@ -72,12 +72,14 @@ function saveContent($page, $content) {
 /**
  * Make text editable in admin mode
  */
-function editable($value, $field_path, $tag = 'span') {
-    if (IS_ADMIN()) {
-        $page = basename($_SERVER['PHP_SELF'], '.php');
-        return "<{$tag} class=\"editable-text\" data-field=\"{$field_path}\" data-page=\"{$page}\">" . htmlspecialchars($value) . "</{$tag}>";
+function editable($value, $field_path, $type = 'text') {
+    if (!IS_ADMIN()) {
+        return $value;
     }
-    return htmlspecialchars($value);
+    $data_field = htmlspecialchars($field_path);
+    $current_page = basename($_SERVER['PHP_SELF'], '.php');
+    if ($current_page === '') $current_page = 'index';
+    return '<span class="editable-content" data-field="' . $data_field . '" data-page="' . $current_page . '">' . $value . '</span>';
 }
 
 /**

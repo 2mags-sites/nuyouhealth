@@ -30,7 +30,8 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
     <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
     <meta name="twitter:description" content="<?php echo htmlspecialchars($page_description); ?>">
 
-    <!-- CSRF Token not needed (sessions disabled in production) -->
+    <!-- CSRF Token for admin mode -->
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -314,91 +315,11 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
             });
         });
 
-        <?php if (IS_ADMIN()): ?>
-        // Admin functions
-        function saveAllChanges() {
-            const editableElements = document.querySelectorAll('.editable-text');
-            const changes = {};
-            const currentPage = '<?php echo basename($_SERVER['PHP_SELF'], '.php'); ?>';
-
-            editableElements.forEach(element => {
-                const field = element.dataset.field;
-                const value = element.textContent;
-                changes[field] = value;
-            });
-
-            if (Object.keys(changes).length === 0) {
-                alert('No changes to save.');
-                return;
-            }
-
-            const requestData = {
-                csrf_token: '', // Empty for now since CSRF is bypassed
-                page: currentPage,
-                fields: changes
-            };
-
-            fetch('admin-save.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Changes saved successfully!');
-                    location.reload();
-                } else {
-                    alert('Error saving changes: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error saving changes. Please try again.');
-            });
-        }
-
-        // Make text editable on click
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.editable-text').forEach(element => {
-                element.style.cursor = 'pointer';
-                element.style.border = '1px dashed rgba(37, 99, 235, 0.3)';
-                element.style.padding = '2px 4px';
-                element.style.borderRadius = '3px';
-
-                element.addEventListener('click', function() {
-                    if (this.contentEditable === 'true') return;
-
-                    this.contentEditable = true;
-                    this.style.backgroundColor = '#eff6ff';
-                    this.style.border = '1px solid #2563eb';
-                    this.focus();
-
-                    // Select all text
-                    const range = document.createRange();
-                    range.selectNodeContents(this);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                });
-
-                element.addEventListener('blur', function() {
-                    this.contentEditable = false;
-                    this.style.backgroundColor = 'transparent';
-                    this.style.border = '1px dashed rgba(37, 99, 235, 0.3)';
-                });
-
-                element.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === 'Escape') {
-                        this.blur();
-                        e.preventDefault();
-                    }
-                });
-            });
-        });
-        <?php endif; ?>
     </script>
+
+    <?php if (IS_ADMIN()): ?>
+    <!-- Admin Mode Scripts -->
+    <script src="assets/js/admin-functions.js" defer></script>
+    <?php endif; ?>
 </body>
 </html>
