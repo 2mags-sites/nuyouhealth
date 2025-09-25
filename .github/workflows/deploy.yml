@@ -1,0 +1,64 @@
+name: Deploy Nu:You Health Website
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Deploy to cPanel
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.CPANEL_FTP_SERVER }}
+        username: ${{ secrets.CPANEL_FTP_USERNAME }}
+        password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+        server-dir: /home/nuyouukcom/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .env
+          README.md
+          .github/
+
+    - name: Upload .env file separately (protected)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.CPANEL_FTP_SERVER }}
+        username: ${{ secrets.CPANEL_FTP_USERNAME }}
+        password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+        server-dir: /home/nuyouukcom/
+        local-dir: ./
+        include: |
+          .env
+
+    - name: Set file permissions
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.CPANEL_SSH_HOST }}
+        username: ${{ secrets.CPANEL_SSH_USERNAME }}
+        password: ${{ secrets.CPANEL_SSH_PASSWORD }}
+        port: ${{ secrets.CPANEL_SSH_PORT }}
+        script: |
+          cd /home/nuyouukcom
+          chmod 600 .env
+          chmod -R 644 *.php
+          chmod -R 644 includes/*.php
+          chmod -R 644 assets/css/*.css
+          chmod 755 assets/images/
+          mkdir -p assets/images/uploads
+          chmod 777 assets/images/uploads
+          echo "Deployment completed successfully!"

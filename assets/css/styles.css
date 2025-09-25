@@ -1,0 +1,440 @@
+:root {
+    --primary-color: #2c3e35;
+    --secondary-color: #6b8a7a;
+    --accent-color: #4a6b5a;
+    --light-color: #a0bfae;
+    --background-color: #f8fffe;
+    --background-alt: #f0f9f7;
+    --text-color: #2c3e35;
+    --text-light: #5a7266;
+    --font-family: 'Playfair Display', serif;
+    --border-radius: 2px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: linear-gradient(135deg, var(--background-color) 0%, var(--background-alt) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    position: relative;
+}
+
+.container {
+    text-align: center;
+    max-width: 800px;
+    padding: 2rem;
+}
+
+.logo-section {
+    margin-bottom: 3rem;
+}
+
+.logo-title {
+    font-size: 4rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.logo-title::before {
+    content: '';
+    position: absolute;
+    top: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--primary-color) 20%, var(--primary-color) 80%, transparent 100%);
+}
+
+.logo-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--primary-color) 20%, var(--primary-color) 80%, transparent 100%);
+}
+
+.logo-subtitle {
+    font-size: 1.8rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    color: var(--accent-color);
+    margin-top: 1.5rem;
+}
+
+.coming-soon {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+}
+
+.description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-light);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.button-container {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.btn {
+    padding: 1rem 2.5rem;
+    font-family: var(--font-family);
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    left: 0;
+}
+
+.btn:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(44, 62, 53, 0.2);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-primary::before {
+    background: #1a2a20;
+}
+
+.btn-secondary {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.btn-secondary::before {
+    background: var(--secondary-color);
+}
+
+.decorative-line {
+    width: 60px;
+    height: 1px;
+    background: var(--light-color);
+    margin: 2rem auto;
+}
+
+/* Modal Styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(44, 62, 53, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.contact-form {
+    background: #ffffff;
+    padding: 3rem;
+    max-width: 500px;
+    width: 90%;
+    border-radius: var(--border-radius);
+    box-shadow: 0 20px 60px rgba(44, 62, 53, 0.3);
+    position: relative;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e0e8e4;
+    background: #fafcfb;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    background: #ffffff;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.checkbox-input {
+    margin-top: 0.25rem;
+    accent-color: var(--secondary-color);
+}
+
+.checkbox-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    cursor: pointer;
+    text-align: left;
+}
+
+.checkbox-label a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color 0.3s ease;
+}
+
+.checkbox-label a:hover {
+    border-bottom-color: var(--secondary-color);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 2px solid var(--light-color);
+    color: var(--secondary-color);
+}
+
+.btn-cancel:hover {
+    background: var(--light-color);
+    color: #ffffff;
+}
+
+.btn-submit {
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-submit:hover {
+    background: #1a2a20;
+    border-color: #1a2a20;
+}
+
+.btn-submit:disabled {
+    background: var(--light-color);
+    border-color: var(--light-color);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--light-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--primary-color);
+}
+
+.background-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    background-image:
+        radial-gradient(circle at 20% 80%, var(--primary-color) 1px, transparent 1px),
+        radial-gradient(circle at 80% 20%, var(--primary-color) 1px, transparent 1px);
+    background-size: 60px 60px, 80px 80px;
+    z-index: -1;
+}
+
+/* Status Messages */
+.status-message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Privacy Policy Styles */
+.privacy-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.privacy-content h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin: 20px 0 10px 0;
+    font-weight: 600;
+}
+
+.privacy-content h4:first-child {
+    margin-top: 0;
+}
+
+.privacy-content ul {
+    margin: 10px 0 15px 20px;
+    padding-left: 0;
+}
+
+.privacy-content li {
+    margin-bottom: 5px;
+}
+
+.privacy-content p {
+    margin-bottom: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .logo-title {
+        font-size: 2.5rem;
+    }
+
+    .logo-subtitle {
+        font-size: 1.3rem;
+    }
+
+    .coming-soon {
+        font-size: 1.2rem;
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 250px;
+    }
+
+    .contact-form {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .form-buttons .btn {
+        width: 100%;
+    }
+}

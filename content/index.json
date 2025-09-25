@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "NU: YOU HEALTH - Coming Soon | Personalized Wellness Solutions",
+    "description": "Your personalized approach to wellness is coming soon. Nu:You Health is crafting a comprehensive health experience that puts you at the center of your care journey.",
+    "keywords": "personalized health solutions, wellness consultation, comprehensive health experience, nu you health"
+  },
+  "hero": {
+    "title": "NU: YOU HEALTH",
+    "subtitle": "HALE",
+    "image": "assets/images/hero-background.jpg"
+  },
+  "coming_soon": {
+    "text": "Coming Soon"
+  },
+  "description": {
+    "text": "Your personalized approach to wellness is on its way. We're crafting a comprehensive health experience that puts you at the center of your care journey."
+  },
+  "buttons": {
+    "primary": {
+      "text": "Get In Touch",
+      "action": "contact_form"
+    },
+    "secondary": {
+      "text": "Practitioner Portal",
+      "link": "https://practitioner.nuyouuk.com"
+    }
+  },
+  "contact_form": {
+    "title": "Get In Touch",
+    "subtitle": "We'd love to hear from you",
+    "privacy_text": "I accept the Privacy Policy and agree to receive communications from NU: YOU HEALTH."
+  }
+}

@@ -1,0 +1,104 @@
+# Nu:You Health - Production Security Configuration
+
+# CRITICAL: Protect .env files FIRST
+<Files .env>
+    Order deny,allow
+    Deny from all
+</Files>
+
+# Block all dot files and sensitive files
+<FilesMatch "^\.">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Protect sensitive file extensions
+<FilesMatch "\.(env|json|log|md|gitignore|lock|bak|backup)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect sensitive directories
+RewriteEngine On
+RewriteRule ^(includes|content|cache)/ - [F,L]
+
+# Protect admin files (allow only from localhost or specific IPs)
+<FilesMatch "(admin-|contact-handler\.php|view-logs\.php)">
+    <RequireAll>
+        Require all denied
+        # Uncomment to allow specific IPs
+        # Require ip 127.0.0.1
+        # Require ip YOUR.IP.ADDRESS
+    </RequireAll>
+</FilesMatch>
+
+# Protect uploads directory (allow images only, disable PHP execution)
+<Directory "assets/images/uploads">
+    # Disable PHP execution
+    php_flag engine off
+    RemoveHandler .php .phtml .php3 .php4 .php5 .phps
+
+    # Only allow specific file types
+    <FilesMatch "\.(gif|jpe?g|png|webp|svg)$">
+        Order Allow,Deny
+        Allow from all
+    </FilesMatch>
+
+    # Block everything else
+    <FilesMatch "\.">
+        Order Deny,Allow
+        Deny from all
+    </FilesMatch>
+</Directory>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Clean URLs (CRITICAL: Exclude POST requests to prevent form data loss)
+RewriteEngine On
+
+# Don't redirect POST requests
+RewriteCond %{REQUEST_METHOD} !POST
+
+# Don't redirect if file exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect .php URLs to clean URLs
+RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Route clean URLs to .php files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^.]+)$ $1.php [L]
+
+# Gzip Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>

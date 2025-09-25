@@ -1,0 +1,31 @@
+# Environment and sensitive files
+.env
+*.log
+*.backup
+*.bak
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Cache files
+cache/
+tmp/
+
+# User uploaded content (optional - include if you want to exclude uploads from git)
+# assets/images/uploads/
+
+# Node modules (if using any build tools)
+node_modules/
+package-lock.json
