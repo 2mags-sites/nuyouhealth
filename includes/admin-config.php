@@ -26,6 +26,9 @@ function isAdminMode() {
     return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
 }
 
+// Define IS_ADMIN constant for template compatibility
+define('IS_ADMIN', isAdminMode());
+
 /**
  * Validate CSRF token (simplified - no sessions available)
  */
