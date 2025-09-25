@@ -50,7 +50,7 @@ $content = loadContent($page);
 
 // Update content with new values
 foreach ($fields as $path => $value) {
-    $content = updateNestedValue($content, $path, $value);
+    updateNestedValue($content, $path, $value);
 }
 
 // Save updated content
@@ -64,7 +64,7 @@ if (saveContent($page, $content)) {
  * Update nested array value using dot notation path
  * Example: "about.image" or "faqs.0.question"
  */
-function updateNestedValue($array, $path, $value) {
+function updateNestedValue(&$array, $path, $value) {
     $keys = explode('.', $path);
     $current = &$array;
 
@@ -85,7 +85,5 @@ function updateNestedValue($array, $path, $value) {
             $current = &$current[$key];
         }
     }
-
-    return $array;
 }
 ?>
