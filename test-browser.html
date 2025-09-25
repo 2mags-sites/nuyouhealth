@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .result { background: #f0f9f7; padding: 10px; margin: 10px 0; border-left: 4px solid #2c3e35; }
+        .error { background: #f8d7da; border-left-color: #dc3545; }
+        button { background: #2c3e35; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🌐 Browser-Side Tests</h1>
+
+    <h2>1. Admin Mode Test</h2>
+    <p>Current URL: <span id="currentUrl"></span></p>
+    <p>Admin Parameter: <span id="adminParam"></span></p>
+    <button onclick="testAdminMode()">Test Admin Mode</button>
+    <div id="adminResult" class="result"></div>
+
+    <h2>2. Contact Form Test</h2>
+    <button onclick="testContactForm()">Test Contact Form AJAX</button>
+    <div id="contactResult" class="result"></div>
+
+    <h2>3. Console Errors</h2>
+    <div id="consoleErrors" class="result"></div>
+
+    <script>
+        // Display current URL info
+        document.getElementById('currentUrl').textContent = window.location.href;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminParam = urlParams.get('admin');
+        document.getElementById('adminParam').textContent = adminParam || 'None';
+
+        // Capture console errors
+        const originalError = console.error;
+        let errorLog = [];
+        console.error = function(...args) {
+            errorLog.push(args.join(' '));
+            originalError.apply(console, args);
+        };
+
+        // Test admin mode
+        function testAdminMode() {
+            const result = document.getElementById('adminResult');
+
+            if (adminParam === 'nuyou_admin_2025_asjhuisa12312') {
+                result.innerHTML = '✅ Correct admin parameter detected<br>';
+
+                // Check for admin bar
+                const adminBar = document.getElementById('admin-bar');
+                if (adminBar) {
+                    result.innerHTML += '✅ Admin bar found in DOM<br>';
+                } else {
+                    result.innerHTML += '❌ Admin bar NOT found in DOM<br>';
+                }
+
+                // Check for editable elements
+                const editableElements = document.querySelectorAll('.editable-text');
+                result.innerHTML += `📝 Found ${editableElements.length} editable elements<br>`;
+
+            } else {
+                result.innerHTML = '❌ Wrong or missing admin parameter<br>';
+                result.innerHTML += 'Expected: nuyou_admin_2025_asjhuisa12312<br>';
+                result.innerHTML += 'Got: ' + (adminParam || 'None');
+            }
+        }
+
+        // Test contact form
+        function testContactForm() {
+            const result = document.getElementById('contactResult');
+            result.innerHTML = '🔄 Testing contact form...';
+
+            const formData = new FormData();
+            formData.append('name', 'Browser Test');
+            formData.append('email', 'test@example.com');
+            formData.append('mobile', '1234567890');
+            formData.append('message', 'This is a browser test message');
+            formData.append('privacy', 'on');
+
+            fetch('contact-handler.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                result.innerHTML += '<br>📡 Response received: ' + response.status + ' ' + response.statusText;
+                return response.text();
+            })
+            .then(text => {
+                result.innerHTML += '<br>📄 Raw response: ' + text.substring(0, 200) + '...';
+
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success) {
+                        result.innerHTML += '<br>✅ SUCCESS: ' + data.message;
+                        result.className = 'result';
+                    } else {
+                        result.innerHTML += '<br>❌ FAILED: ' + data.message;
+                        result.className = 'result error';
+                    }
+                } catch (e) {
+                    result.innerHTML += '<br>❌ Invalid JSON response: ' + e.message;
+                    result.className = 'result error';
+                }
+            })
+            .catch(error => {
+                result.innerHTML += '<br>❌ Network error: ' + error.message;
+                result.className = 'result error';
+            });
+        }
+
+        // Show console errors after page load
+        setTimeout(() => {
+            const consoleDiv = document.getElementById('consoleErrors');
+            if (errorLog.length > 0) {
+                consoleDiv.innerHTML = '❌ Console Errors:<br>' + errorLog.join('<br>');
+                consoleDiv.className = 'result error';
+            } else {
+                consoleDiv.innerHTML = '✅ No console errors detected';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
