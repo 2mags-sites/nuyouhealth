@@ -59,6 +59,26 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
         <a href="?logout=true" style="color: #fca5a5; text-decoration: none; margin-left: 15px;">Logout</a>
     </div>
     <div style="height: 50px;"></div> <!-- Admin bar spacer -->
+
+    <!-- Admin Mode Styles -->
+    <style>
+        .editable-content {
+            outline: 1px dashed #2563eb !important;
+            outline-offset: 2px !important;
+            min-height: 20px !important;
+            display: inline-block !important;
+            min-width: 50px !important;
+            cursor: pointer !important;
+        }
+        .editable-content:hover {
+            outline: 2px solid #2563eb !important;
+            background: rgba(37, 99, 235, 0.05) !important;
+        }
+        .editable-content:focus {
+            outline: 2px solid #2563eb !important;
+            background: rgba(37, 99, 235, 0.1) !important;
+        }
+    </style>
     <?php endif; ?>
 
     <div class="background-decoration"></div>
