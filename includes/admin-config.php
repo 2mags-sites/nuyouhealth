@@ -14,8 +14,8 @@ if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Include core configuration
-require_once __DIR__ . '/config.php';
+// Load environment variables directly
+require_once __DIR__ . '/env-loader.php';
 
 // Admin secret keys
 define('ADMIN_SECRET_KEY', EnvLoader::get('ADMIN_SECRET_KEY', 'dev_admin_key'));
@@ -43,9 +43,22 @@ if (isset($_GET['clearcache']) && $_GET['clearcache'] === CACHE_CLEAR_KEY) {
     exit;
 }
 
-// Admin mode status
-define('ADMIN_MODE', isset($_SESSION['admin_mode']) && $_SESSION['admin_mode'] === true);
-define('IS_ADMIN', ADMIN_MODE);
+// Admin mode status - only define if not already defined
+if (!defined('IS_ADMIN')) {
+    define('IS_ADMIN', isset($_SESSION['admin_mode']) && $_SESSION['admin_mode'] === true);
+}
+if (!defined('ADMIN_MODE')) {
+    define('ADMIN_MODE', IS_ADMIN);
+}
+
+/**
+ * Verify CSRF token - define if not already defined
+ */
+if (!function_exists('verifyCSRFToken')) {
+    function verifyCSRFToken($token) {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
+}
 
 /**
  * Load content from JSON file
