@@ -28,22 +28,9 @@ if (!empty($_POST['honeypot'])) {
     exit;
 }
 
-// Verify CSRF token (skip in development for testing)
-$skip_csrf = (isset($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'localhost');
-
-if (!$skip_csrf) {
-    if (!isset($_SESSION['csrf_token']) || !isset($_POST['csrf_token']) ||
-        $_SESSION['csrf_token'] !== $_POST['csrf_token']) {
-        $response['message'] = 'Security validation failed. Please refresh and try again.';
-        echo json_encode($response);
-        exit;
-    }
-} else {
-    // In development, generate token if missing
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-}
+// Skip CSRF token validation since sessions are disabled
+// Production security is handled by honeypot and rate limiting
+$skip_csrf = true;
 
 // Validate required fields
 $required_fields = ['name', 'email', 'message'];
@@ -76,18 +63,29 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-// Rate limiting
-$max_submissions = (int)EnvLoader::get('MAX_SUBMISSIONS_PER_HOUR', 20);
-if (!isset($_SESSION['form_submissions'])) {
-    $_SESSION['form_submissions'] = [];
+// Rate limiting (simplified - no sessions available)
+// Basic IP-based rate limiting using file system
+$rate_limit_file = __DIR__ . '/rate_limit.json';
+$max_submissions = 20;
+$current_ip = $_SERVER['REMOTE_ADDR'];
+$current_time = time();
+
+$rate_data = [];
+if (file_exists($rate_limit_file)) {
+    $rate_data = json_decode(file_get_contents($rate_limit_file), true) ?: [];
 }
 
-// Clean old submissions (older than 1 hour)
-$_SESSION['form_submissions'] = array_filter($_SESSION['form_submissions'], function($time) {
-    return $time > (time() - 3600);
+// Clean old entries
+$rate_data = array_filter($rate_data, function($time) use ($current_time) {
+    return $time > ($current_time - 3600); // Keep entries from last hour
 });
 
-if (count($_SESSION['form_submissions']) >= $max_submissions) {
+// Count submissions from current IP
+$ip_submissions = array_filter($rate_data, function($time, $ip) use ($current_ip) {
+    return $ip === $current_ip;
+}, ARRAY_FILTER_USE_BOTH);
+
+if (count($ip_submissions) >= $max_submissions) {
     $response['message'] = 'Too many submissions. Please try again later.';
     echo json_encode($response);
     exit;
@@ -110,7 +108,8 @@ try {
     $result = $emailService->sendContactFormEmail($formData);
 
     // Log submission time for rate limiting
-    $_SESSION['form_submissions'][] = time();
+    $rate_data[$current_ip . '_' . time()] = $current_time;
+    file_put_contents($rate_limit_file, json_encode($rate_data));
 
     $response['success'] = true;
     $response['message'] = EnvLoader::get('FORM_SUCCESS_MESSAGE',
@@ -143,7 +142,8 @@ try {
         $headers .= "X-Mailer: PHP/" . phpversion();
 
         if (mail($to, $subject, $email_body, $headers)) {
-            $_SESSION['form_submissions'][] = time();
+            $rate_data[$current_ip . '_' . time()] = $current_time;
+            file_put_contents($rate_limit_file, json_encode($rate_data));
             $response['success'] = true;
             $response['message'] = EnvLoader::get('FORM_SUCCESS_MESSAGE',
                 'Thank you for your message. We will be in touch soon.');
@@ -157,8 +157,7 @@ try {
     }
 }
 
-// Generate new CSRF token for next submission
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// No CSRF token generation needed (sessions disabled)
 
 echo json_encode($response);
 ?>

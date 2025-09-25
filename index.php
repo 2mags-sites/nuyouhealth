@@ -30,10 +30,7 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
     <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
     <meta name="twitter:description" content="<?php echo htmlspecialchars($page_description); ?>">
 
-    <!-- CSRF Token -->
-    <?php if (IS_ADMIN): ?>
-    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
-    <?php endif; ?>
+    <!-- CSRF Token not needed (sessions disabled in production) -->
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -258,9 +255,6 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
 
                     // Prepare form data
                     const formData = new FormData(this);
-                    <?php if (isset($_SESSION['csrf_token'])): ?>
-                    formData.append('csrf_token', '<?php echo $_SESSION['csrf_token']; ?>');
-                    <?php endif; ?>
 
                     // Submit form
                     fetch('contact-handler.php', {
@@ -341,7 +335,6 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
             const formData = new FormData();
             formData.append('page', currentPage);
             formData.append('changes', JSON.stringify(changes));
-            formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
 
             fetch('admin-save.php', {
                 method: 'POST',

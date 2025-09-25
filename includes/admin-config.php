@@ -10,15 +10,14 @@ define('CACHE_CLEAR_KEY', EnvLoader::get('CACHE_CLEAR_KEY', 'nuyou_cache_default
 // Admin mode activation
 $admin_mode = false;
 if (isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY) {
-    $_SESSION['admin_mode'] = true;
+    // Sessions disabled - use direct parameter check
     $admin_mode = true;
 } elseif (isset($_GET['logout']) && $_GET['logout'] === 'true') {
-    unset($_SESSION['admin_mode']);
+    // Logout - redirect to clean URL
     header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
     exit();
-} elseif (isset($_SESSION['admin_mode']) && $_SESSION['admin_mode'] === true) {
-    $admin_mode = true;
 }
+// Note: Without sessions, admin mode only works with ?admin=key parameter
 
 // Cache clearing
 if (isset($_GET['clearcache']) && $_GET['clearcache'] === CACHE_CLEAR_KEY) {
