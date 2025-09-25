@@ -120,11 +120,33 @@ $content = loadContent('index');
             console.error('JS Error: ' + msg + ' at ' + url + ':' + line);
         };
     </script>
-    <?php else: ?>
-    <div class="debug-section" style="background: #fef2f2;">
-        <h2>❌ Admin Mode Not Active</h2>
-        <p><a href="?admin=<?php echo ADMIN_SECRET_KEY; ?>">Click here to activate admin mode</a></p>
-    </div>
     <?php endif; ?>
+
+    <div class="debug-section">
+        <h2>File Access Test</h2>
+        <p><strong>admin-functions.js exists:</strong> <?php echo file_exists(__DIR__ . '/assets/js/admin-functions.js') ? '<span class="ok">YES</span>' : '<span class="error">NO</span>'; ?></p>
+        <p><strong>File size:</strong> <?php echo file_exists(__DIR__ . '/assets/js/admin-functions.js') ? filesize(__DIR__ . '/assets/js/admin-functions.js') . ' bytes' : 'N/A'; ?></p>
+        <p><strong>File readable:</strong> <?php echo is_readable(__DIR__ . '/assets/js/admin-functions.js') ? '<span class="ok">YES</span>' : '<span class="error">NO</span>'; ?></p>
+        <p><strong>Test URL:</strong> <a href="assets/js/admin-functions.js" target="_blank">assets/js/admin-functions.js</a></p>
+    </div>
+
+    <script>
+        // Test if we can fetch the JavaScript file
+        fetch('assets/js/admin-functions.js')
+            .then(response => {
+                console.log('admin-functions.js fetch status: ' + response.status + ' ' + response.statusText);
+                if (!response.ok) {
+                    console.error('Failed to load admin-functions.js: ' + response.status);
+                }
+                return response.text();
+            })
+            .then(text => {
+                console.log('admin-functions.js content length: ' + text.length + ' characters');
+                console.log('Content preview: ' + text.substring(0, 100) + '...');
+            })
+            .catch(error => {
+                console.error('Error fetching admin-functions.js: ' + error.message);
+            });
+    </script>
 </body>
 </html>
