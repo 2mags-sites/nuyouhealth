@@ -30,7 +30,6 @@ if (!empty($_POST['honeypot'])) {
 
 // Skip CSRF token validation since sessions are disabled
 // Production security is handled by honeypot and rate limiting
-$skip_csrf = true;
 
 // Validate required fields
 $required_fields = ['name', 'email', 'message'];

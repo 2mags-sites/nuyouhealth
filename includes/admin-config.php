@@ -19,6 +19,22 @@ if (isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY) {
 }
 // Note: Without sessions, admin mode only works with ?admin=key parameter
 
+/**
+ * Check if admin mode is active (for template compatibility)
+ */
+function isAdminMode() {
+    return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
+}
+
+/**
+ * Validate CSRF token (simplified - no sessions available)
+ */
+function validateCSRFToken($token) {
+    // Since sessions are disabled, skip CSRF validation
+    // Security is provided by admin key and honeypot
+    return true;
+}
+
 // Cache clearing
 if (isset($_GET['clearcache']) && $_GET['clearcache'] === CACHE_CLEAR_KEY) {
     // Clear any cache files if needed
