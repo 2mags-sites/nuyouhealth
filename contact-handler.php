@@ -7,6 +7,10 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once 'includes/config.php';
 require_once 'includes/env-loader.php';
 require_once 'includes/email-service.php';
+require_once 'includes/error-logger.php';
+
+// Log the contact form request
+ErrorLogger::logRequest('contact-handler.php');
 
 // Set JSON response header
 header('Content-Type: application/json');
@@ -101,10 +105,22 @@ $formData = [
     'ip' => $_SERVER['REMOTE_ADDR']
 ];
 
+// Log the form data being sent
+ErrorLogger::log('Preparing to send email', [
+    'to_email' => EnvLoader::get('CONTACT_TO_EMAIL'),
+    'from_email' => EnvLoader::get('CONTACT_FROM_EMAIL'),
+    'sendgrid_api_key' => substr(EnvLoader::get('SENDGRID_API_KEY', ''), 0, 10) . '...',
+    'form_data' => $formData
+]);
+
 // Try to send email using EmailService
 try {
     $emailService = new EmailService();
+    ErrorLogger::log('EmailService created, attempting to send email');
+
     $result = $emailService->sendContactFormEmail($formData);
+
+    ErrorLogger::log('Email send result', ['result' => $result]);
 
     // Log submission time for rate limiting
     $rate_data[$current_ip . '_' . time()] = $current_time;
@@ -116,6 +132,7 @@ try {
 
 } catch (Exception $e) {
     // Log error
+    ErrorLogger::logError('Email send failed', $e);
     error_log('Contact form error: ' . $e->getMessage());
 
     // Try PHP mail as fallback if enabled

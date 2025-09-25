@@ -52,6 +52,17 @@ class EmailService {
      * Send email using SendGrid API
      */
     private function sendWithSendGrid($to, $subject, $body, $from, $fromName, $replyTo, $bcc, $isHtml) {
+        // Add logging if ErrorLogger is available
+        if (class_exists('ErrorLogger')) {
+            ErrorLogger::log('SendGrid: Starting email send', [
+                'to' => $to,
+                'subject' => $subject,
+                'from' => $from,
+                'api_key_present' => !empty($this->sendgridApiKey),
+                'api_key_prefix' => substr($this->sendgridApiKey, 0, 10)
+            ]);
+        }
+
         $url = 'https://api.sendgrid.com/v3/mail/send';
 
         // Build email data
@@ -106,6 +117,16 @@ class EmailService {
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         curl_close($ch);
+
+        // Log the response
+        if (class_exists('ErrorLogger')) {
+            ErrorLogger::log('SendGrid: API Response', [
+                'http_code' => $httpCode,
+                'curl_error' => $error,
+                'response' => $response,
+                'email_data_sent' => json_encode($emailData)
+            ]);
+        }
 
         if ($error) {
             return [
