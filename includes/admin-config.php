@@ -1,46 +1,68 @@
 <?php
 // Admin Configuration for Nu:You Health
+session_start();
+
 require_once __DIR__ . '/env-loader.php';
 require_once __DIR__ . '/config.php';
+
+// Generate CSRF token if not exists
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Load secrets from .env file
 define('ADMIN_SECRET_KEY', EnvLoader::get('ADMIN_SECRET_KEY', 'nuyou_admin_default'));
 define('CACHE_CLEAR_KEY', EnvLoader::get('CACHE_CLEAR_KEY', 'nuyou_cache_default'));
 
-// Admin mode activation
-$admin_mode = false;
+// Check if admin mode should be activated
 if (isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY) {
-    // Sessions disabled - use direct parameter check
-    $admin_mode = true;
-} elseif (isset($_GET['logout']) && $_GET['logout'] === 'true') {
-    // Logout - redirect to clean URL
-    header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
-    exit();
+    $_SESSION['admin_mode'] = true;
+    $_SESSION['admin_login_time'] = time();
+    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    exit;
 }
-// Note: Without sessions, admin mode only works with ?admin=key parameter
+
+// Check if logout requested
+if (isset($_GET['logout']) && $_GET['logout'] === 'true') {
+    unset($_SESSION['admin_mode']);
+    unset($_SESSION['admin_login_time']);
+    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    exit;
+}
+
+// Check admin session timeout (2 hours)
+if (isset($_SESSION['admin_mode']) && isset($_SESSION['admin_login_time'])) {
+    if (time() - $_SESSION['admin_login_time'] > 7200) {
+        unset($_SESSION['admin_mode']);
+        unset($_SESSION['admin_login_time']);
+    } else {
+        // Refresh login time on activity
+        $_SESSION['admin_login_time'] = time();
+    }
+}
+
+// Define admin mode constant
+define('IS_ADMIN', isset($_SESSION['admin_mode']) && $_SESSION['admin_mode'] === true);
 
 /**
- * Check if admin mode is active (for template compatibility)
+ * Check if admin mode is active
  */
 function isAdminMode() {
-    return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
+    return IS_ADMIN;
 }
 
 /**
  * Check if admin mode is active (for template compatibility)
- * Use this instead of IS_ADMIN constant to ensure dynamic checking
  */
 function IS_ADMIN() {
-    return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
+    return IS_ADMIN;
 }
 
 /**
- * Validate CSRF token (simplified - no sessions available)
+ * Validate CSRF token
  */
 function validateCSRFToken($token) {
-    // Since sessions are disabled, skip CSRF validation
-    // Security is provided by admin key and honeypot
-    return true;
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 // Cache clearing
