@@ -25,15 +25,16 @@ Options -Indexes
 RewriteEngine On
 RewriteRule ^(includes|content|cache)/ - [F,L]
 
-# Protect admin files (allow only from localhost or specific IPs)
-<FilesMatch "(admin-|view-logs\.php)">
-    <RequireAll>
-        Require all denied
-        # Uncomment to allow specific IPs
-        # Require ip 127.0.0.1
-        # Require ip YOUR.IP.ADDRESS
-    </RequireAll>
-</FilesMatch>
+# Protect admin files - but handled by PHP session check
+# These files check for admin mode internally
+# <FilesMatch "(admin-|view-logs\.php)">
+#     <RequireAll>
+#         Require all denied
+#         # Uncomment to allow specific IPs
+#         # Require ip 127.0.0.1
+#         # Require ip YOUR.IP.ADDRESS
+#     </RequireAll>
+# </FilesMatch>
 
 # Allow contact-handler.php (needed for contact form)
 # Admin files still protected by admin key parameter
