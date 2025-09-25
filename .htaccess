@@ -26,7 +26,7 @@ RewriteEngine On
 RewriteRule ^(includes|content|cache)/ - [F,L]
 
 # Protect admin files (allow only from localhost or specific IPs)
-<FilesMatch "(admin-|contact-handler\.php|view-logs\.php)">
+<FilesMatch "(admin-|view-logs\.php)">
     <RequireAll>
         Require all denied
         # Uncomment to allow specific IPs
@@ -34,6 +34,9 @@ RewriteRule ^(includes|content|cache)/ - [F,L]
         # Require ip YOUR.IP.ADDRESS
     </RequireAll>
 </FilesMatch>
+
+# Allow contact-handler.php (needed for contact form)
+# Admin files still protected by admin key parameter
 
 # Protect uploads directory (allow images only, disable PHP execution)
 <Directory "assets/images/uploads">
