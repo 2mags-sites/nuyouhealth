@@ -332,13 +332,18 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('page', currentPage);
-            formData.append('changes', JSON.stringify(changes));
+            const requestData = {
+                csrf_token: '', // Empty for now since CSRF is bypassed
+                page: currentPage,
+                fields: changes
+            };
 
             fetch('admin-save.php', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
             })
             .then(response => response.json())
             .then(data => {

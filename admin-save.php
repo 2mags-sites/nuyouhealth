@@ -60,30 +60,4 @@ if (saveContent($page, $content)) {
     echo json_encode(['success' => false, 'message' => 'Failed to save content']);
 }
 
-/**
- * Update nested array value using dot notation path
- * Example: "about.image" or "faqs.0.question"
- */
-function updateNestedValue(&$array, $path, $value) {
-    $keys = explode('.', $path);
-    $current = &$array;
-
-    foreach ($keys as $i => $key) {
-        // Check if this is a numeric index
-        if (is_numeric($key)) {
-            $key = (int)$key;
-        }
-
-        if ($i === count($keys) - 1) {
-            // Last key, set the value
-            $current[$key] = $value;
-        } else {
-            // Not the last key, traverse deeper
-            if (!isset($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-    }
-}
 ?>
