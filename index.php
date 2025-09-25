@@ -50,7 +50,7 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
     </script>
 </head>
 <body>
-    <?php if (IS_ADMIN): ?>
+    <?php if (IS_ADMIN()): ?>
     <!-- Admin Bar -->
     <div id="admin-bar" style="position: fixed; top: 0; left: 0; right: 0; background: #2563eb; color: white; padding: 10px 20px; z-index: 9999; font-family: Arial, sans-serif; font-size: 14px;">
         <span>✏️ Admin Mode Active</span>
@@ -314,7 +314,7 @@ $page_keywords = $content['meta']['keywords'] ?? 'personalized health, wellness,
             });
         });
 
-        <?php if (IS_ADMIN): ?>
+        <?php if (IS_ADMIN()): ?>
         // Admin functions
         function saveAllChanges() {
             const editableElements = document.querySelectorAll('.editable-text');

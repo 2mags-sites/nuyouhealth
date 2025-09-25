@@ -26,9 +26,12 @@ function isAdminMode() {
     return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
 }
 
-// Define IS_ADMIN constant for template compatibility (check dynamically)
-if (!defined('IS_ADMIN')) {
-    define('IS_ADMIN', isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY);
+/**
+ * Check if admin mode is active (for template compatibility)
+ * Use this instead of IS_ADMIN constant to ensure dynamic checking
+ */
+function IS_ADMIN() {
+    return isset($_GET['admin']) && $_GET['admin'] === ADMIN_SECRET_KEY;
 }
 
 /**
@@ -46,8 +49,6 @@ if (isset($_GET['clearcache']) && $_GET['clearcache'] === CACHE_CLEAR_KEY) {
     header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
     exit();
 }
-
-define('IS_ADMIN', $admin_mode);
 
 /**
  * Load content from JSON file
@@ -72,7 +73,7 @@ function saveContent($page, $content) {
  * Make text editable in admin mode
  */
 function editable($value, $field_path, $tag = 'span') {
-    if (IS_ADMIN) {
+    if (IS_ADMIN()) {
         $page = basename($_SERVER['PHP_SELF'], '.php');
         return "<{$tag} class=\"editable-text\" data-field=\"{$field_path}\" data-page=\"{$page}\">" . htmlspecialchars($value) . "</{$tag}>";
     }
@@ -89,7 +90,7 @@ function editableImage($src, $field, $placeholder, $alt = '') {
         $src = placeholderImage($placeholder);
     }
 
-    if (IS_ADMIN) {
+    if (IS_ADMIN()) {
         return "<img src=\"{$src}\" alt=\"{$alt}\" class=\"editable-image\" data-field=\"{$field}\" data-page=\"{$page}\" data-placeholder=\"{$placeholder}\" style=\"cursor: pointer;\" />";
     }
 
