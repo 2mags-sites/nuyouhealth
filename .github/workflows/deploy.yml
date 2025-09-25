@@ -1,64 +1,48 @@
-name: Deploy Nu:You Health Website
+name: Deploy to Production
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: 🚀 Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+    - name: 📤 Deploy to server
+      uses: appleboy/scp-action@v0.1.4
       with:
-        php-version: '8.1'
+        host: ${{ secrets.WHM_HOST }}
+        username: ${{ secrets.WHM_USERNAME }}
+        key: ${{ secrets.WHM_SSH_KEY }}
+        source: "*"
+        target: "/home/nuyouukcom/public_html"
+        rm: false
 
-    - name: Deploy to cPanel
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.CPANEL_FTP_SERVER }}
-        username: ${{ secrets.CPANEL_FTP_USERNAME }}
-        password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-        server-dir: /home/nuyouukcom/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          .env
-          README.md
-          .github/
-
-    - name: Upload .env file separately (protected)
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.CPANEL_FTP_SERVER }}
-        username: ${{ secrets.CPANEL_FTP_USERNAME }}
-        password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-        server-dir: /home/nuyouukcom/
-        local-dir: ./
-        include: |
-          .env
-
-    - name: Set file permissions
+    - name: 🔒 Set correct permissions
       uses: appleboy/ssh-action@v0.1.5
       with:
-        host: ${{ secrets.CPANEL_SSH_HOST }}
-        username: ${{ secrets.CPANEL_SSH_USERNAME }}
-        password: ${{ secrets.CPANEL_SSH_PASSWORD }}
-        port: ${{ secrets.CPANEL_SSH_PORT }}
+        host: ${{ secrets.WHM_HOST }}
+        username: ${{ secrets.WHM_USERNAME }}
+        key: ${{ secrets.WHM_SSH_KEY }}
         script: |
-          cd /home/nuyouukcom
-          chmod 600 .env
-          chmod -R 644 *.php
-          chmod -R 644 includes/*.php
-          chmod -R 644 assets/css/*.css
-          chmod 755 assets/images/
-          mkdir -p assets/images/uploads
-          chmod 777 assets/images/uploads
-          echo "Deployment completed successfully!"
+          # Set ownership
+          chown -R nuyouukcom:nuyouukcom /home/nuyouukcom/public_html
+
+          # Set directory permissions
+          find /home/nuyouukcom/public_html -type d -exec chmod 755 {} \;
+
+          # Set file permissions
+          find /home/nuyouukcom/public_html -type f -exec chmod 644 {} \;
+
+          # Make uploads writable
+          [ -d "/home/nuyouukcom/public_html/assets/images/uploads" ] && \
+            chmod 777 /home/nuyouukcom/public_html/assets/images/uploads
+
+          # Protect .env
+          [ -f "/home/nuyouukcom/public_html/.env" ] && \
+            chmod 600 /home/nuyouukcom/public_html/.env
