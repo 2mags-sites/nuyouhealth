@@ -1,6 +1,8 @@
 <?php
 // Basic configuration for Nu:You Health
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/env-loader.php';
 

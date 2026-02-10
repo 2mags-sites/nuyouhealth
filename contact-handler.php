@@ -53,11 +53,11 @@ if (!isset($_POST['privacy']) || $_POST['privacy'] !== 'on') {
 }
 
 // Sanitize input
-$name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+$name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
 $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$phone = filter_var($_POST['mobile'] ?? $_POST['phone'] ?? '', FILTER_SANITIZE_STRING);
-$message = filter_var($_POST['message'], FILTER_SANITIZE_STRING);
-$service = filter_var($_POST['service'] ?? '', FILTER_SANITIZE_STRING);
+$phone = htmlspecialchars(trim($_POST['mobile'] ?? $_POST['phone'] ?? ''), ENT_QUOTES, 'UTF-8');
+$message = htmlspecialchars(trim($_POST['message']), ENT_QUOTES, 'UTF-8');
+$service = htmlspecialchars(trim($_POST['service'] ?? ''), ENT_QUOTES, 'UTF-8');
 
 // Validate email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -122,9 +122,13 @@ try {
 
     ErrorLogger::log('Email send result', ['result' => $result]);
 
+    if (!$result['success']) {
+        throw new Exception($result['message'] ?? 'Email sending failed');
+    }
+
     // Log submission time for rate limiting
     $rate_data[$current_ip . '_' . time()] = $current_time;
-    file_put_contents($rate_limit_file, json_encode($rate_data));
+    @file_put_contents($rate_limit_file, json_encode($rate_data));
 
     $response['success'] = true;
     $response['message'] = EnvLoader::get('FORM_SUCCESS_MESSAGE',

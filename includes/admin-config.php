@@ -151,6 +151,7 @@ function renderAdminBar() {
         <div style="display: flex; align-items: center; gap: 10px;">
             <button id="save-changes" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">Save Changes</button>
             <button id="add-faq" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">Add FAQ</button>
+            <button onclick="downloadContent()" style="background: #8b5cf6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">📥 Download Content</button>
             <a href="?logout=true" style="background: #ef4444; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-weight: 500;">Exit Admin</a>
         </div>
     </div>

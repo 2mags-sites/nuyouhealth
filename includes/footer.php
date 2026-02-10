@@ -223,6 +223,16 @@
             });
         }
 
+        function downloadContent() {
+            const link = document.createElement('a');
+            link.href = 'download-content.php';
+            link.download = 'content-backup-' + new Date().toISOString().slice(0, 10) + '.zip';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log('Initiating content download...');
+        }
+
         function saveAllChanges() {
             if (Object.keys(editedFields).length === 0) {
                 alert('No changes to save');
